@@ -93,13 +93,13 @@ class my_check_data:
         if not vertical: # 縦棒グラフの場合
             plt.bar(position, df["number"])
             plt.ylabel("frequency", fontsize = 12)
-            plt.xticks(position, df.index)
+            plt.xticks(position, df.index, fontname = "MS Gothic")
         else:
             # 棒グラフの出力
             #plt.figure(figsize = (4, 0.5*len(df)))
             plt.barh(position, df["number"])
             plt.xlabel("frequency", fontsize = 12)
-            plt.yticks(position, df.index)
+            plt.yticks(position, df.index, fontname = "MS Gothic")
 
     # 二つの変数の相関
 
