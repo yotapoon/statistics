@@ -28,17 +28,19 @@ class my_linear_regression:
         self.dict_dummy_list[col_name] = dummy_list[:] # ダミー変数の要素(dropした後のもの)を列の名前ごとに保存
 
     def fit(self, target, factor_list, dummy_list = []): # ファクターを指定して回帰する，dummy_listの意味が違っていることに注意
+        X_to_fit = self.X.copy()
         # 定数項を追加
-        factor_list.insert(0, "const")
-        self.X["const"] = np.ones(len(self.X))
-
+        self.factor_list = factor_list[:]
+        self.factor_list.insert(0, "const")
+        print(self.factor_list)
+        X_to_fit["const"] = np.ones(len(X_to_fit))
+        
         # ダミー変数をファクターに追加
         for dummy in dummy_list:
-            factor_list = factor_list + self.dict_dummy_list[dummy]
-        self.factor_list = factor_list # predictで使用するので保存
+            self.factor_list = self.factor_list + self.dict_dummy_list[dummy]
 
         # 回帰
-        self.result = sm.OLS(self.X[target], self.X[factor_list]).fit()
+        self.result = sm.OLS(X_to_fit[target], X_to_fit[self.factor_list]).fit()
         # saveで使用するので保存
         self.df_params = pd.DataFrame(index = self.result.params.index, columns = [])
         self.df_params["coef"] = self.result.params.values
@@ -68,4 +70,7 @@ class my_linear_regression:
             self.file_exist = True # フラグの更新
 
     def predict(self): # fitに使用したfactor_listでtargetを推計する
-        return self.result.predict(self.X[self.factor_list])
+        X_to_predict = self.X.copy()
+        X_to_predict["const"] = np.ones(len(X_to_predict))
+        
+        return self.result.predict(X_to_predict[self.factor_list])
