@@ -159,7 +159,8 @@ class my_check_data:
         # ファイルの出力
         for factor in factor_list:
             self.save(df[[col_name] + [factor]], sheet_name = col_name + " vs " + factor, index = False)
-
+            
+        position = np.arange(len(dummy_list))
         # 箱ひげ図の作成
         if vertical: # ダミー変数が列として横に並ぶ
             plt.figure(figsize = (len(dummy_list), 4*len(factor_list)))
@@ -168,7 +169,13 @@ class my_check_data:
                 x_dummy = [[] for _ in range(len(dummy_list))] # ダミーの値に対応するファクターのリストを格納する
                 for idx_dummy, dummy in enumerate(dummy_list):
                     x_dummy[idx_dummy] = self.X[self.X[col_name] == dummy][factor] # dummyに対応するfactorの値をリストとして保存
-                plt.boxplot(x_dummy, vert = True, labels = dummy_list)
+                
+                # 箱ひげ図のプロット
+                plt.boxplot(x_dummy, vert = vertical, positions = position)
+                if idx_factor == len(factor_list) - 1:
+                    plt.xticks(position, dummy_list, fontname = "MS Gothic")
+                else:
+                    plt.xticks(position, "")
                 plt.xlabel(factor, fontsize = 14, fontname = "MS Gothic")
         else: # ダミー変数が行として縦に並ぶ
             dummy_list = dummy_list[::-1] # ダミーの順序を変更しないといい感じに表示されない
@@ -178,5 +185,11 @@ class my_check_data:
                 x_dummy = [[] for _ in range(len(dummy_list))] # ダミーの値に対応するファクターのリストを格納する
                 for idx_dummy, dummy in enumerate(dummy_list):
                     x_dummy[idx_dummy] = self.X[self.X[col_name] == dummy][factor] # dummyに対応するfactorの値をリストとして保存
-                plt.boxplot(x_dummy, vert = False, labels = dummy_list)
+                    
+                # 箱ひげ図のプロット
+                plt.boxplot(x_dummy, vert = vertical, fontname = "MS Gothic")
+                if idx_factor == 0:
+                    plt.yticks(position, dummy_list, fontname = "MS Gothic")
+                else:
+                    plt.yticks(position, "")
                 plt.xlabel(factor, fontsize = 14, fontname = "MS Gothic")
